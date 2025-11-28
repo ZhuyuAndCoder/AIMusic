@@ -240,3 +240,4 @@ export default function PlaylistPage() {
     </div>
   );
 }
+export const runtime = 'edge';
