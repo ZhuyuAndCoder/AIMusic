@@ -1,0 +1,33 @@
+{
+  "name": "ai-music",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "build:cf": "next-on-pages",
+    "preview:cf": "wrangler pages dev ./.vercel/output/static",
+    "deploy:cf": "wrangler pages deploy ./.vercel/output/static --project-name ai-music"
+  },
+  "dependencies": {
+    "lucide-react": "^0.555.0",
+    "next": "15.5.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.2",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "@cloudflare/next-on-pages": "^1.13.0",
+    "wrangler": "^3.80.0"
+  }
+}
