@@ -60,7 +60,7 @@ export default function HomePage() {
               <span className="text-sky-600">专属音乐</span>
             </h1>
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              结合QQ音乐和网易云音乐风格，利用AI技术创建个性化歌单，分享和收藏您喜爱的音乐
+          利用AI技术创建个性化歌单，分享和收藏您喜爱的音乐
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/create">

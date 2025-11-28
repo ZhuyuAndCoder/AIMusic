@@ -14,8 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AI音乐 - 智能音乐创作平台",
-  description:
-    "结合QQ音乐和网易云音乐风格的AI音乐创作平台，利用AI技术创建个性化歌单",
+  description: "AI音乐创作平台，利用AI技术创建个性化歌单，分享和收藏音乐。",
 };
 
 export default function RootLayout({

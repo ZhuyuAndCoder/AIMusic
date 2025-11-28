@@ -29,7 +29,7 @@ const games: Game[] = [
   },
   {
     id: "daletou",
-    title: "体彩大乐透摇号",
+    title: "模拟大乐透摇号",
     description: "模拟大乐透摇号过程，包含球滚动与摇号动画",
     category: "休闲模拟",
     difficulty: "medium",
@@ -1115,9 +1115,7 @@ function DaletouGame({ onBack }: { onBack: () => void }) {
               <ArrowLeft className="h-4 w-4 mr-2" />
               返回游戏列表
             </Button>
-            <h1 className="text-4xl font-bold text-white mb-2">
-              体彩大乐透摇号
-            </h1>
+            <h1 className="text-4xl font-bold text-white mb-2">大乐透</h1>
             <p className="text-gray-400">
               5个前区号码(1-35)与2个后区号码(1-12)
             </p>
