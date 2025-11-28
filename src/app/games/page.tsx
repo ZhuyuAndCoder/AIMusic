@@ -6,7 +6,14 @@ import { Header } from "@/components/layout/Header";
 import { PlayerBar } from "@/components/layout/PlayerBar";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Dice1, Gamepad2, Trophy, ArrowLeft, CloudRain } from "lucide-react";
+import {
+  Dice1,
+  Gamepad2,
+  Trophy,
+  ArrowLeft,
+  CloudRain,
+  Palette,
+} from "lucide-react";
 import { FadeIn } from "@/components/ui/FadeIn";
 
 interface Game {
@@ -59,6 +66,14 @@ const games: Game[] = [
     difficulty: "easy",
     icon: <Gamepad2 className="h-8 w-8 text-green-600" />,
   },
+  {
+    id: "canvas-board",
+    title: "自由画板",
+    description: "白底画板，支持调色与导出，亦可在图片上作画",
+    category: "创意绘画",
+    difficulty: "easy",
+    icon: <Palette className="h-8 w-8 text-sky-600" />,
+  },
 ];
 
 export default function GamesPage() {
@@ -98,6 +113,9 @@ export default function GamesPage() {
   }
   if (selectedGame === "rain-run") {
     return <RainRunGame onBack={() => setSelectedGame(null)} />;
+  }
+  if (selectedGame === "canvas-board") {
+    return <CanvasBoardGame onBack={() => setSelectedGame(null)} />;
   }
 
   return (
@@ -172,6 +190,244 @@ export default function GamesPage() {
         </FadeIn>
       </main>
 
+      <PlayerBar />
+    </div>
+  );
+}
+
+function CanvasBoardGame({ onBack }: { onBack: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [color, setColor] = useState<string>("#1f2937");
+  const [size, setSize] = useState<number>(6);
+  const drawingRef = useRef<boolean>(false);
+  const lastRef = useRef<{ x: number; y: number } | null>(null);
+  const bgImgRef = useRef<HTMLImageElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [fileName, setFileName] = useState<string>("");
+  const dprRef = useRef<number>(1);
+
+  const setupCanvas = () => {
+    const c = canvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const parent = containerRef.current;
+    const rect = parent
+      ? parent.getBoundingClientRect()
+      : ({ width: 900, height: 600 } as DOMRect);
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    dprRef.current = dpr;
+    const cssW = Math.floor(rect.width);
+    const cssH = Math.floor(rect.height - 64);
+    c.style.width = cssW + "px";
+    c.style.height = cssH + "px";
+    c.width = Math.floor(cssW * dpr);
+    c.height = Math.floor(cssH * dpr);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, cssW, cssH);
+    if (bgImgRef.current) {
+      const img = bgImgRef.current;
+      const ratio = Math.min(cssW / img.width, cssH / img.height);
+      const iw = img.width * ratio;
+      const ih = img.height * ratio;
+      const ix = (cssW - iw) / 2;
+      const iy = (cssH - ih) / 2;
+      ctx.drawImage(img, ix, iy, iw, ih);
+    }
+  };
+
+  useEffect(() => {
+    setupCanvas();
+    const onResize = () => setupCanvas();
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const getPos = (e: PointerEvent | MouseEvent | TouchEvent) => {
+    const c = canvasRef.current;
+    if (!c) return { x: 0, y: 0 };
+    const rect = c.getBoundingClientRect();
+    let x = 0,
+      y = 0;
+    const any = e as any;
+    const cx = any.clientX ?? (any.touches ? any.touches[0].clientX : 0);
+    const cy = any.clientY ?? (any.touches ? any.touches[0].clientY : 0);
+    x = cx - rect.left;
+    y = cy - rect.top;
+    return { x, y };
+  };
+
+  const drawTo = (x: number, y: number) => {
+    const c = canvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const last = lastRef.current;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = size;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    if (last) ctx.moveTo(last.x, last.y);
+    else ctx.moveTo(x, y);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    lastRef.current = { x, y };
+  };
+
+  useEffect(() => {
+    const c = canvasRef.current;
+    if (!c) return;
+    const down = (e: PointerEvent) => {
+      e.preventDefault();
+      drawingRef.current = true;
+      const p = getPos(e);
+      drawTo(p.x, p.y);
+    };
+    const move = (e: PointerEvent) => {
+      if (!drawingRef.current) return;
+      e.preventDefault();
+      const p = getPos(e);
+      drawTo(p.x, p.y);
+    };
+    const up = () => {
+      drawingRef.current = false;
+      lastRef.current = null;
+    };
+    c.addEventListener("pointerdown", down);
+    c.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    return () => {
+      c.removeEventListener("pointerdown", down);
+      c.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+    };
+  }, [color, size]);
+
+  const clear = (removeImage?: boolean) => {
+    const c = canvasRef.current;
+    if (!c) return;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const dpr = dprRef.current;
+    const cssW = Math.floor(c.width / dpr);
+    const cssH = Math.floor(c.height / dpr);
+    ctx.clearRect(0, 0, cssW, cssH);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, cssW, cssH);
+    if (removeImage) {
+      bgImgRef.current = null;
+      setFileName("");
+    }
+    if (!removeImage && bgImgRef.current) {
+      const img = bgImgRef.current;
+      const ratio = Math.min(cssW / img.width, cssH / img.height);
+      const iw = img.width * ratio;
+      const ih = img.height * ratio;
+      const ix = (cssW - iw) / 2;
+      const iy = (cssH - ih) / 2;
+      ctx.drawImage(img, ix, iy, iw, ih);
+    }
+  };
+
+  const onUpload = (file: File) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      bgImgRef.current = img;
+      setFileName(file.name);
+      clear(false);
+      URL.revokeObjectURL(url);
+    };
+    img.src = url;
+  };
+
+  const exportPNG = () => {
+    const c = canvasRef.current;
+    if (!c) return;
+    const data = c.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = data;
+    a.download = "canvas.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <main className="max-w-7xl mx-auto px-4 py-8 pb-32" ref={containerRef}>
+        <FadeIn>
+          <div className="mb-6">
+            <Button variant="ghost" size="sm" onClick={onBack} className="mb-4">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              返回游戏列表
+            </Button>
+            <h1 className="text-4xl font-bold text-white mb-2">自由画板</h1>
+            <p className="text-gray-400">
+              白底作画、调色、导出，支持叠加图片后继续绘制
+            </p>
+          </div>
+        </FadeIn>
+        <FadeIn>
+          <Card className="p-6">
+            <div className="flex flex-wrap items-center gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-300 text-sm">画笔颜色</span>
+                <input
+                  type="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="w-10 h-10 p-0 bg-transparent border-none"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-300 text-sm">粗细</span>
+                <input
+                  type="range"
+                  min={1}
+                  max={40}
+                  value={size}
+                  onChange={(e) => setSize(Number(e.target.value))}
+                />
+                <span className="text-gray-400 text-sm">{size}px</span>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onUpload(f);
+                }}
+                className="hidden"
+              />
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                选择图片
+              </Button>
+              {fileName && (
+                <span className="text-gray-400 text-sm">{fileName}</span>
+              )}
+              <Button variant="outline" onClick={() => clear(true)}>
+                清空
+              </Button>
+              <Button variant="primary" onClick={exportPNG}>
+                导出PNG
+              </Button>
+            </div>
+            <div className="bg-white rounded-lg overflow-hidden border border-gray-700">
+              <canvas ref={canvasRef} className="w-full touch-none" />
+            </div>
+          </Card>
+        </FadeIn>
+      </main>
       <PlayerBar />
     </div>
   );
@@ -1043,8 +1299,8 @@ function DaletouGame({ onBack }: { onBack: () => void }) {
     setFrontResult(front);
     setBackResult(back);
     const seq: { num: number; type: "front" | "back" }[] = [
-      ...front.map((n) => ({ num: n, type: "front" })),
-      ...back.map((n) => ({ num: n, type: "back" })),
+      ...front.map((n) => ({ num: n, type: "front" as const })),
+      ...back.map((n) => ({ num: n, type: "back" as const })),
     ];
     let t = 0;
     seq.forEach((s, i) => {

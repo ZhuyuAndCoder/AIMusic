@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { apiGet } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { Playlist } from "@/types/playlist";
-import { Track } from "@/types/track";
+import { Track } from "@/types/playlist";
 import { PlaylistCard } from "@/components/music/PlaylistCard";
-import TrackItem from "@/components/music/TrackItem";
+import { TrackItem } from "@/components/music/TrackItem";
 import { User, Music, Heart, ShoppingBag } from "lucide-react";
 
 export default function ProfilePage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
   const [userPlaylists, setUserPlaylists] = useState<Playlist[]>([]);
   const [favoriteTracks, setFavoriteTracks] = useState<Track[]>([]);
@@ -94,8 +94,8 @@ export default function ProfilePage() {
       case "favorites":
         return (
           <div className="space-y-4">
-            {favoriteTracks.map((track) => (
-              <TrackItem key={track.id} track={track} />
+            {favoriteTracks.map((track, idx) => (
+              <TrackItem key={track.id} track={track} index={idx} />
             ))}
             {favoriteTracks.length === 0 && (
               <div className="text-center py-12 text-gray-400">

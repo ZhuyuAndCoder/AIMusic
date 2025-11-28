@@ -41,7 +41,8 @@ export default function RegisterPage() {
       const { data, error } = await signUp(email, password, username);
 
       if (error) {
-        setError(error.message);
+        const msg = typeof error === 'string' ? error : (error as any)?.message || '注册失败';
+        setError(msg);
       } else if (data) {
         router.push("/");
       }

@@ -3,6 +3,10 @@ import React from "react";
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
+  onMouseDown?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onMouseUp?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  onTouchStart?: (e: React.TouchEvent<HTMLButtonElement>) => void;
+  onTouchEnd?: (e: React.TouchEvent<HTMLButtonElement>) => void;
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
@@ -13,6 +17,10 @@ interface ButtonProps {
 export const Button: React.FC<ButtonProps> = ({
   children,
   onClick,
+  onMouseDown,
+  onMouseUp,
+  onTouchStart,
+  onTouchEnd,
   variant = "primary",
   size = "md",
   disabled = false,
@@ -44,6 +52,10 @@ export const Button: React.FC<ButtonProps> = ({
     <button
       type={type}
       onClick={onClick}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       disabled={disabled}
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${className}`}
     >

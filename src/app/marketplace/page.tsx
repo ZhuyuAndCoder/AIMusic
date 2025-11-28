@@ -36,7 +36,6 @@ export default function MarketplacePage() {
   };
 
   const filteredPlaylists = playlists.filter((playlist) => {
-    if (filter === "featured" && !playlist.is_featured) return false;
     if (priceFilter === "free" && playlist.price > 0) return false;
     if (priceFilter === "paid" && playlist.price === 0) return false;
     return true;
@@ -158,7 +157,7 @@ export default function MarketplacePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredPlaylists.map((playlist) => (
-              <PlaylistCard key={playlist.id} playlist={playlist} showPrice />
+              <PlaylistCard key={playlist.id} playlist={playlist} />
             ))}
           </div>
         )}

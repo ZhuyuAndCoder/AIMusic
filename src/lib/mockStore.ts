@@ -121,7 +121,7 @@ class MockStore {
     }
   }
 
-  createPlaylist(data: Omit<Playlist, 'id' | 'created_at' | 'updated_at' | 'play_count' | 'like_count'> & { price?: number }) {
+  createPlaylist(data: Omit<Playlist, 'id' | 'created_at' | 'updated_at' | 'play_count' | 'like_count' | 'price'> & { price?: number }) {
     const id = String(Object.keys(this.playlists).length + 1);
     const playlist: Playlist = {
       id,
@@ -147,4 +147,3 @@ class MockStore {
 }
 
 export const mockStore = new MockStore();
-

@@ -52,7 +52,7 @@ export const useAI = () => {
         preferences,
       }));
 
-      return { data: playlistData, error: null };
+      return { data: data.playlist, error: null };
     } catch (error) {
       setAiState((prev) => ({ ...prev, isGenerating: false }));
       return { data: null, error };

@@ -27,7 +27,8 @@ export default function LoginPage() {
       const { data, error } = await signIn(email, password);
 
       if (error) {
-        setError(error.message);
+        const msg = typeof error === 'string' ? error : (error as any)?.message || '登录失败';
+        setError(msg);
       } else if (data) {
         router.push("/");
       }
