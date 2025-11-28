@@ -30,27 +30,33 @@ graph TD
 
 ## 2. 技术描述
 
-- **前端**: Next.js@14 + React@18 + TypeScript + Tailwind CSS
-- **初始化工具**: create-next-app
-- **后端**: Supabase (BaaS)
-- **数据库**: Supabase PostgreSQL
-- **认证**: Supabase Auth
-- **存储**: Supabase Storage
-- **AI服务**: 外部AI音乐生成API
+* **前端**: Next.js\@14 + React\@18 + TypeScript + Tailwind CSS
+
+* **初始化工具**: create-next-app
+
+* **后端**: Supabase (BaaS)
+
+* **数据库**: Supabase PostgreSQL
+
+* **认证**: Supabase Auth
+
+* **存储**: Supabase Storage
+
+* **AI服务**: 外部AI音乐生成API
 
 ## 3. 路由定义
 
-| 路由 | 用途 |
-|------|------|
-| / | 首页，展示推荐音乐和热门歌单 |
-| /create | AI创作页面，生成个性化歌单 |
-| /playlist/[id] | 歌单详情页，展示歌单内容和播放功能 |
-| /profile | 个人中心，管理个人歌单和收藏 |
-| /marketplace | 歌单商城，浏览和购买精品歌单 |
-| /player | 音乐播放器页面 |
-| /auth/login | 用户登录页面 |
-| /auth/register | 用户注册页面 |
-| /auth/callback | 认证回调页面 |
+| 路由              | 用途                |
+| --------------- | ----------------- |
+| /               | 首页，展示推荐音乐和热门歌单    |
+| /create         | AI创作页面，生成个性化歌单    |
+| /playlist/\[id] | 歌单详情页，展示歌单内容和播放功能 |
+| /profile        | 个人中心，管理个人歌单和收藏    |
+| /marketplace    | 歌单商城，浏览和购买精品歌单    |
+| /player         | 音乐播放器页面           |
+| /auth/login     | 用户登录页面            |
+| /auth/register  | 用户注册页面            |
+| /auth/callback  | 认证回调页面            |
 
 ## 4. API定义
 
@@ -61,17 +67,19 @@ POST /api/auth/login
 ```
 
 请求参数：
-| 参数名 | 参数类型 | 是否必需 | 描述 |
-|--------|----------|----------|------|
-| email | string | 是 | 用户邮箱 |
-| password | string | 是 | 用户密码 |
+
+| 参数名      | 参数类型   | 是否必需 | 描述   |
+| -------- | ------ | ---- | ---- |
+| email    | string | 是    | 用户邮箱 |
+| password | string | 是    | 用户密码 |
 
 响应参数：
-| 参数名 | 参数类型 | 描述 |
-|--------|----------|------|
-| user | object | 用户信息 |
-| session | object | 会话信息 |
-| error | string | 错误信息（如果有） |
+
+| 参数名     | 参数类型   | 描述        |
+| ------- | ------ | --------- |
+| user    | object | 用户信息      |
+| session | object | 会话信息      |
+| error   | string | 错误信息（如果有） |
 
 ### 4.2 AI创作API
 
@@ -80,19 +88,21 @@ POST /api/ai/create-playlist
 ```
 
 请求参数：
-| 参数名 | 参数类型 | 是否必需 | 描述 |
-|--------|----------|----------|------|
-| style | string | 是 | 音乐风格 |
-| mood | string | 是 | 音乐情绪 |
-| scene | string | 是 | 使用场景 |
-| userId | string | 是 | 用户ID |
+
+| 参数名    | 参数类型   | 是否必需 | 描述   |
+| ------ | ------ | ---- | ---- |
+| style  | string | 是    | 音乐风格 |
+| mood   | string | 是    | 音乐情绪 |
+| scene  | string | 是    | 使用场景 |
+| userId | string | 是    | 用户ID |
 
 响应参数：
-| 参数名 | 参数类型 | 描述 |
-|--------|----------|------|
+
+| 参数名        | 参数类型   | 描述      |
+| ---------- | ------ | ------- |
 | playlistId | string | 生成的歌单ID |
-| tracks | array | 音乐列表 |
-| status | string | 生成状态 |
+| tracks     | array  | 音乐列表    |
+| status     | string | 生成状态    |
 
 ### 4.3 歌单管理API
 
@@ -101,17 +111,19 @@ GET /api/playlists
 ```
 
 请求参数：
-| 参数名 | 参数类型 | 是否必需 | 描述 |
-|--------|----------|----------|------|
-| userId | string | 否 | 用户ID（可选） |
-| category | string | 否 | 分类筛选 |
-| limit | number | 否 | 返回数量限制 |
+
+| 参数名      | 参数类型   | 是否必需 | 描述       |
+| -------- | ------ | ---- | -------- |
+| userId   | string | 否    | 用户ID（可选） |
+| category | string | 否    | 分类筛选     |
+| limit    | number | 否    | 返回数量限制   |
 
 响应参数：
-| 参数名 | 参数类型 | 描述 |
-|--------|----------|------|
-| playlists | array | 歌单列表 |
-| total | number | 总数 |
+
+| 参数名       | 参数类型   | 描述   |
+| --------- | ------ | ---- |
+| playlists | array  | 歌单列表 |
+| total     | number | 总数   |
 
 ## 5. 数据库架构
 
@@ -185,6 +197,7 @@ erDiagram
 ### 5.2 数据定义语言
 
 用户表 (users)
+
 ```sql
 -- 创建用户表
 CREATE TABLE users (
@@ -205,6 +218,7 @@ CREATE INDEX idx_users_username ON users(username);
 ```
 
 歌单表 (playlists)
+
 ```sql
 -- 创建歌单表
 CREATE TABLE playlists (
@@ -231,6 +245,7 @@ CREATE INDEX idx_playlists_public ON playlists(is_public);
 ```
 
 音乐表 (tracks)
+
 ```sql
 -- 创建音乐表
 CREATE TABLE tracks (
@@ -252,6 +267,7 @@ CREATE INDEX idx_tracks_order ON tracks(playlist_id, order_index);
 ```
 
 收藏表 (favorites)
+
 ```sql
 -- 创建收藏表
 CREATE TABLE favorites (
@@ -268,6 +284,7 @@ CREATE INDEX idx_favorites_playlist_id ON favorites(playlist_id);
 ```
 
 购买记录表 (purchases)
+
 ```sql
 -- 创建购买记录表
 CREATE TABLE purchases (
@@ -390,3 +407,4 @@ interface AIState {
   preferences: AIPreferences;
 }
 ```
+
