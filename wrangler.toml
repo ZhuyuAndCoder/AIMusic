@@ -1,3 +1,4 @@
+compatibility_flags = ["nodejs_compat"]
 name = "ai-music"
 compatibility_date = "2025-11-26"
 
